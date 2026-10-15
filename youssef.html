@@ -1833,6 +1833,8 @@
     const rememberProfile = document.getElementById('remember-profile');
     const profileIntro = document.getElementById('profile-intro');
     const profileError = document.getElementById('profile-error');
+    const isAdminRoute = window.location.pathname.replace(/\/+$/, '').toLowerCase().endsWith('/admin')
+      || new URLSearchParams(window.location.search).get('admin') === '1';
     const profileStorageKey = 'bananaArenaProfile';
     const roomDirectoryStorageKey = 'bananaArenaRoomDirectory';
     let hostedDirectoryPeerId = null;
@@ -1911,6 +1913,10 @@
       }
       missionHud.innerHTML = `PILOT // ${escapeHtml(playerUsername)}<br><strong>ELIMINATE. SURVIVE. FLEX.</strong>`;
       profileGate.style.display = 'none';
+      if (isAdminRoute) {
+        startGame();
+        openAdminRoom();
+      }
     });
 
     initializeProfileGate();
