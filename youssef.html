@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FPS Arena with Boss Waves & Freecam</title>
   <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
     body {
       margin: 0;
       overflow: hidden;
       background: #87ceeb;
       font-family: system-ui, sans-serif;
       touch-action: none;
+      min-height: var(--app-height, 100vh);
     }
     body::before {
       content: "";
@@ -35,8 +40,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: var(--app-height, 100vh);
       background: rgba(15, 23, 42, 0.4); 
       display: flex;
       flex-direction: column;
@@ -403,8 +408,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: var(--app-height, 100vh);
       pointer-events: none;
       display: none;
       z-index: 120;
@@ -872,8 +877,8 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: var(--app-height, 100vh);
       background: rgba(15, 23, 42, 0.7);
       flex-direction: column;
       justify-content: center;
@@ -922,7 +927,7 @@
 
   <div id="main-menu">
     <h1 class="title">FPS ARENA</h1>
-    <p class="subtitle">Move: WASD or touch arrows · Look: mouse or drag right side · Jump: Space · Sprint: Shift · Fire bullets: click/tap · Drop peel: E · Chat: Enter · Pause: Esc</p>
+    <p class="subtitle">Move: WASD or touch arrows · Look: mouse or drag right side · Jump: Space · Sprint: Shift · Hold click/tap to fire · Drop peel: E · Chat: Enter · Pause: Esc</p>
     <button class="menu-btn" onclick="startGame()">PLAY SOLO</button>
     <button class="menu-btn green" onclick="openMultiplayer()">MULTIPLAYER</button>
   </div>
@@ -1231,6 +1236,7 @@
     renderer.toneMappingExposure = 1.05;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
     const playerGun = new THREE.Group();
@@ -1992,7 +1998,7 @@
       const showControls = visible && usesTouchControls();
       mobileControls.style.display = showControls ? 'block' : 'none';
       controlsHint.textContent = usesTouchControls()
-        ? `Move: touch arrows | Look: drag right side | Jump: JUMP | Shoot: FIRE |${dashUnlocked ? ' Dash: DASH |' : ''} Pause: PAUSE`
+        ? `Move: touch arrows | Look: drag right side | Jump: JUMP | Hold FIRE to shoot |${dashUnlocked ? ' Dash: DASH |' : ''} Pause: PAUSE`
         : `Move: WASD | Look: Mouse | Jump: Space | Sprint: Shift | Drop Peel: E |${dashUnlocked ? ' Dash: F |' : ''} Freecam: Shift + P | Pause: Esc`;
     }
     if (touchPointerQuery) {
@@ -4361,7 +4367,7 @@
         if (isGiantRobot) {
           if (isMouseDown) shootGiantBanana();
           if (keys['q']) fireRobotLaser();
-        } else if (isMouseDown && (isGolfGun || isNoCooldown)) {
+        } else if (isMouseDown) {
           shootProjectile();
         }
 
@@ -4547,12 +4553,23 @@
       renderer.render(scene, camera);
     }
 
-    window.addEventListener('resize', () => {
+    function resizeGameViewport() {
+      const viewport = window.visualViewport;
+      const width = Math.max(1, Math.round(viewport ? viewport.width : window.innerWidth));
+      const height = Math.max(1, Math.round(viewport ? viewport.height : window.innerHeight));
+      document.documentElement.style.setProperty('--app-height', `${height}px`);
       setMobileControlsVisible(mobileControlsRequested);
-      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+      renderer.setSize(width, height);
+    }
+
+    window.addEventListener('resize', resizeGameViewport);
+    window.addEventListener('orientationchange', resizeGameViewport);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', resizeGameViewport);
+    }
+    resizeGameViewport();
 
     enableRealisticShadows();
     animate();
