@@ -800,6 +800,40 @@
     .admin-room-entry strong { display: block; color: #e0f2fe; }
     .admin-room-entry small { display: block; margin: 4px 0 7px; color: #9fb3c8; font-size: 10px; }
     .admin-room-entry .admin-btn { margin: 3px 0; padding: 8px; font-size: 11px; }
+    .admin-room-entry .admin-room-join {
+      width: 100%;
+      min-height: 42px;
+      color: #ecfdf5;
+      background: linear-gradient(110deg, #047857, #059669);
+      border-color: #34d399;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .admin-room-entry .admin-room-join:hover:not(:disabled) {
+      background: linear-gradient(110deg, #059669, #10b981);
+      border-color: #a7f3d0;
+    }
+    .admin-room-entry .admin-room-join:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
+    .admin-room-entry .admin-room-connect {
+      width: 100%;
+      min-height: 42px;
+      color: #ecfeff;
+      background: linear-gradient(110deg, #0e7490, #0369a1);
+      border-color: #67e8f9;
+      font-size: 13px;
+      font-weight: bold;
+    }
+    .admin-room-entry .admin-room-connect:hover:not(:disabled) {
+      background: linear-gradient(110deg, #0891b2, #0284c7);
+      border-color: #cffafe;
+    }
+    .admin-room-entry .admin-room-connect:disabled {
+      opacity: 0.58;
+      cursor: not-allowed;
+    }
     .admin-room-field {
       width: 100%;
       box-sizing: border-box;
@@ -1106,7 +1140,7 @@
     <div class="admin-room-grid">
       <div class="camera-card">
         <strong>🌐 ROOM RADAR</strong>
-        <p>Find live rooms and their reported player counts. Remote control is available only when that room's host enabled it and shared their key with you.</p>
+        <p>Connect for host-approved remote controls without leaving the Nexus. Joining as a player exits the Nexus and enters gameplay.</p>
         <input id="admin-room-directory-url" class="admin-room-field" type="url" placeholder="Shared room-directory URL" aria-label="Shared room-directory URL">
         <input id="admin-directory-key" type="password" autocomplete="off" placeholder="Host-approved admin key" aria-label="Host-approved admin key">
         <button class="admin-btn" onclick="saveAdminDirectoryAndScan()">💾 Save Directory &amp; Scan</button>
@@ -2240,6 +2274,17 @@
           return;
         }
 
+        rooms.sort((a, b) => {
+          const aPlayers = Number.isInteger(a.players) ? a.players : 1;
+          const bPlayers = Number.isInteger(b.players) ? b.players : 1;
+          const aCapacity = Number.isInteger(a.capacity) ? a.capacity : 8;
+          const bCapacity = Number.isInteger(b.capacity) ? b.capacity : 8;
+          const aFull = aPlayers >= aCapacity;
+          const bFull = bPlayers >= bCapacity;
+          if (aFull !== bFull) return aFull ? 1 : -1;
+          return (aPlayers / aCapacity) - (bPlayers / bCapacity);
+        });
+
         rooms.forEach(room => {
           const entry = document.createElement('div');
           entry.className = 'admin-room-entry';
@@ -2248,23 +2293,31 @@
           const meta = document.createElement('small');
           const players = Number.isInteger(room.players) ? room.players : 1;
           const capacity = Number.isInteger(room.capacity) ? room.capacity : 8;
-          meta.textContent = `${players}/${capacity} pilots · ${room.adminEnabled === true ? 'host-approved admin available' : 'join as player'}`;
+          meta.textContent = `${players}/${capacity} pilots · ${room.adminEnabled === true ? 'host-approved controls available' : 'player access'}`;
           const joinButton = document.createElement('button');
-          joinButton.className = 'admin-btn';
+          joinButton.className = 'admin-btn admin-room-join';
           joinButton.type = 'button';
-          joinButton.textContent = '🎮 Join as Player';
-          joinButton.disabled = players >= capacity;
+          const isOwnRoom = isHost && peer && peer.open && room.peerId === peer.id;
+          joinButton.textContent = isOwnRoom ? '🏠 YOUR HOSTED ROOM' : '🎮 JOIN AS PLAYER';
+          joinButton.disabled = isOwnRoom || players >= capacity;
+          if (isOwnRoom) joinButton.title = 'You are already hosting this room.';
+          else if (players >= capacity) joinButton.title = 'This room is full.';
           joinButton.addEventListener('click', () => joinDirectoryRoomAsPlayer(room.peerId));
-          entry.append(name, meta, joinButton);
+          entry.append(name, meta);
 
           if (room.adminEnabled === true) {
             const adminButton = document.createElement('button');
-            adminButton.className = 'admin-btn';
+            adminButton.className = 'admin-btn admin-room-connect';
             adminButton.type = 'button';
-            adminButton.textContent = '🛰️ Request Host-Approved Control';
+            adminButton.textContent = '🛰️ CONNECT IN NEXUS';
+            adminButton.disabled = isOwnRoom;
+            adminButton.title = isOwnRoom
+              ? 'You are already hosting this room.'
+              : 'Request host-approved remote controls without leaving the Observation Nexus.';
             adminButton.addEventListener('click', () => connectToApprovedRoom(room));
             entry.appendChild(adminButton);
           }
+          entry.appendChild(joinButton);
           list.appendChild(entry);
         });
         status.textContent = `${rooms.length} live room${rooms.length === 1 ? '' : 's'} found. Player counts are supplied by each room host.`;
