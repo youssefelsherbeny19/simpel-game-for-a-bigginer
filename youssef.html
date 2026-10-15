@@ -526,19 +526,95 @@
     }
     #admin-room {
       display: none;
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 220;
-      padding: 24px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      padding: clamp(16px, 3vw, 34px);
       color: #e2e8f0;
-      background: radial-gradient(circle at 50% 20%, rgba(30, 41, 59, 0.96), rgba(2, 6, 23, 0.98));
+      background:
+        radial-gradient(ellipse at 12% 4%, rgba(6, 182, 212, 0.2), transparent 34%),
+        radial-gradient(ellipse at 94% 88%, rgba(124, 58, 237, 0.16), transparent 32%),
+        linear-gradient(rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+        linear-gradient(145deg, #0b1224, #020617 76%);
+      background-size: auto, auto, 34px 34px, 34px 34px, auto;
       animation: adminRoomBoot 0.35s ease-out;
     }
     @keyframes adminRoomBoot {
       from { opacity: 0; filter: brightness(2) blur(4px); }
       to { opacity: 1; filter: brightness(1) blur(0); }
     }
-    #admin-room h2 { color: #67e8f9; margin: 0 0 6px; text-shadow: 0 0 15px rgba(34, 211, 238, 0.8); }
+    .admin-room-header {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(18px, 3vw, 30px);
+      overflow: hidden;
+      border: 1px solid rgba(34, 211, 238, 0.36);
+      border-radius: 18px;
+      background: linear-gradient(115deg, rgba(8, 47, 73, 0.78), rgba(15, 23, 42, 0.78) 58%, rgba(49, 46, 129, 0.38));
+      box-shadow: 0 16px 55px rgba(0, 0, 0, 0.35), inset 0 1px rgba(255, 255, 255, 0.06);
+    }
+    .admin-room-header::after {
+      content: "◈";
+      position: absolute;
+      right: 6%;
+      top: 50%;
+      transform: translateY(-58%);
+      color: rgba(103, 232, 249, 0.12);
+      font-size: clamp(90px, 18vw, 190px);
+      pointer-events: none;
+    }
+    #admin-room h2 {
+      margin: 6px 0;
+      color: #a5f3fc;
+      font-size: clamp(23px, 4vw, 38px);
+      letter-spacing: 2px;
+      text-shadow: 0 0 24px rgba(34, 211, 238, 0.65);
+    }
+    .admin-room-kicker {
+      color: #22d3ee;
+      font: bold 10px monospace;
+      letter-spacing: 3px;
+    }
+    .admin-route-badge {
+      display: none;
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      z-index: 1;
+      padding: 7px 10px;
+      border: 1px solid rgba(74, 222, 128, 0.42);
+      border-radius: 999px;
+      color: #86efac;
+      background: rgba(2, 44, 34, 0.78);
+      box-shadow: 0 0 18px rgba(34, 197, 94, 0.12);
+      font: bold 10px monospace;
+      letter-spacing: 1px;
+    }
+    #admin-room.direct-admin-entry .admin-route-badge { display: block; }
+    #admin-room.direct-admin-entry .admin-room-header {
+      border-color: rgba(74, 222, 128, 0.48);
+      box-shadow: 0 16px 55px rgba(0, 0, 0, 0.35), 0 0 28px rgba(34, 197, 94, 0.08), inset 0 1px rgba(255, 255, 255, 0.06);
+    }
+    .admin-room-subtitle { max-width: 620px; margin: 8px 0 0; color: #cbd5e1; font-size: 13px; line-height: 1.6; }
+    .admin-room-status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .admin-room-status span {
+      padding: 7px 10px;
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      border-radius: 999px;
+      color: #bae6fd;
+      background: rgba(2, 6, 23, 0.5);
+      font: 11px monospace;
+    }
+    .admin-room-status strong { color: #67e8f9; }
     #spectator-controls {
       display: none;
       position: absolute;
@@ -675,9 +751,22 @@
       font: 12px monospace;
       letter-spacing: 1px;
     }
-    .admin-room-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 18px; }
-    .camera-card { padding: 14px; border: 1px solid #155e75; border-radius: 10px; background: rgba(8, 47, 73, 0.55); }
-    .camera-card strong { color: #67e8f9; }
+    .admin-room-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 14px; width: min(1100px, 100%); margin: 16px auto 0; }
+    .camera-card {
+      position: relative;
+      padding: 18px;
+      border: 1px solid rgba(34, 211, 238, 0.24);
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.94), rgba(8, 47, 73, 0.58));
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.22), inset 0 1px rgba(255, 255, 255, 0.035);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .camera-card:hover { transform: translateY(-3px); border-color: rgba(103, 232, 249, 0.62); box-shadow: 0 16px 38px rgba(8, 145, 178, 0.12); }
+    .camera-card > strong { color: #67e8f9; font: bold 12px monospace; letter-spacing: 1.5px; }
+    .camera-card p { color: #a9bad0; font-size: 12px; line-height: 1.55; }
+    .camera-card .admin-btn { background: rgba(8, 47, 73, 0.74); border-color: rgba(34, 211, 238, 0.26); }
+    .camera-card .admin-btn:hover { background: rgba(8, 145, 178, 0.42); border-color: #67e8f9; }
+    .camera-card .admin-btn:focus-visible { outline: 2px solid #a5f3fc; outline-offset: 2px; }
     #player-roster {
       display: grid;
       gap: 6px;
@@ -696,6 +785,27 @@
       border-color: #22d3ee;
       background: rgba(8, 145, 178, 0.35);
     }
+    .admin-room-entry {
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      border-radius: 9px;
+      background: rgba(2, 6, 23, 0.38);
+    }
+    .admin-room-entry strong { display: block; color: #e0f2fe; }
+    .admin-room-entry small { display: block; margin: 4px 0 7px; color: #9fb3c8; font-size: 10px; }
+    .admin-room-entry .admin-btn { margin: 3px 0; padding: 8px; font-size: 11px; }
+    .admin-room-field {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 5px 0;
+      padding: 9px;
+      border: 1px solid #155e75;
+      border-radius: 7px;
+      color: #ecfeff;
+      background: rgba(2, 6, 23, 0.82);
+    }
+    #admin-room-list { display: grid; gap: 7px; margin-top: 8px; }
     #admin-room::before {
       content: "SECURE OVERRIDE // OBSERVATION LINK ACTIVE";
       display: block;
@@ -704,6 +814,16 @@
       letter-spacing: 2px;
       opacity: 0.8;
       margin-bottom: 10px;
+      text-align: center;
+    }
+    @media (max-width: 620px) {
+      #admin-room { padding: 14px; }
+      .admin-room-header { border-radius: 13px; }
+      .admin-room-status span { font-size: 10px; }
+      .camera-card { padding: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #admin-room, .camera-card { animation: none; transition: none; }
     }
     .admin-status {
       display: flex;
@@ -965,10 +1085,42 @@
   </div>
 
   <div id="admin-room">
-    <h2>🛰️ ADMIN OBSERVATION ROOM</h2>
     <div id="admin-screen-label">SCREEN: YOUR CAMERA</div>
-    <div>Live control center · watch the arena, launch harmless chaos, and reuse your event powers.</div>
+    <header class="admin-room-header">
+      <div class="admin-route-badge" role="status">● DIRECT /ADMIN LINK</div>
+      <div class="admin-room-kicker">ARENA NETWORK // COMMAND ACCESS GRANTED</div>
+      <h2>🛰️ OBSERVATION NEXUS</h2>
+      <p class="admin-room-subtitle">Live arena control center. Monitor the action, jump into a camera feed, and unleash extremely professional amounts of harmless chaos.</p>
+      <div class="admin-room-status" aria-live="polite">
+        <span>WAVE <strong id="admin-wave-readout">1</strong></span>
+        <span>HOSTILES <strong id="admin-hostiles-readout">0</strong></span>
+        <span>REMOTE PILOTS <strong id="admin-pilots-readout">0</strong></span>
+        <span>ARENA TIME <strong id="admin-time-readout">1x</strong></span>
+      </div>
+    </header>
     <div class="admin-room-grid">
+      <div class="camera-card">
+        <strong>🌐 ROOM RADAR</strong>
+        <p>Find live rooms and their reported player counts. Remote control is available only when that room's host enabled it and shared their key with you.</p>
+        <input id="admin-room-directory-url" class="admin-room-field" type="url" placeholder="Shared room-directory URL" aria-label="Shared room-directory URL">
+        <input id="admin-directory-key" type="password" autocomplete="off" placeholder="Host-approved admin key" aria-label="Host-approved admin key">
+        <button class="admin-btn" onclick="saveAdminDirectoryAndScan()">💾 Save Directory &amp; Scan</button>
+        <button class="admin-btn" onclick="loadAdminRoomDirectory()">🔄 Scan Live Rooms</button>
+        <p id="admin-room-directory-status" role="status" aria-live="polite">Use the same shared room directory configured in the server browser.</p>
+        <div id="admin-room-list"></div>
+        <div id="host-admin-setup" style="display: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(34, 211, 238, 0.2);">
+          <strong>🔐 HOST APPROVAL</strong>
+          <p>Enable admin access for this hosted room, then share the key with the person you trust. The key is only kept in this browser session.</p>
+          <input id="host-remote-admin-key" class="admin-room-field" type="text" autocomplete="off" placeholder="Shared key (at least 12 characters)" aria-label="Host remote admin key">
+          <div class="admin-quick-actions">
+            <button class="admin-btn" onclick="setRemoteAdminKey()">✅ Enable / Update Key</button>
+            <button class="admin-btn" onclick="generateRemoteAdminKey()">🎲 Generate Key</button>
+          </div>
+          <button class="admin-btn" onclick="copyRemoteAdminKey()">📋 Copy Key to Share</button>
+          <button class="admin-btn" onclick="disableRemoteAdmin()">🚫 Disable Remote Admin</button>
+          <small id="host-remote-admin-status" role="status">Remote room control is off.</small>
+        </div>
+      </div>
       <div class="camera-card">
         <strong>REMOTE CAMERA</strong>
         <p id="remote-camera-status">No connected player or bot camera yet.</p>
@@ -988,19 +1140,37 @@
         <p style="font-size: 11px; color: #a5f3fc;">Pilot controls: WASD move · hold click = giant banana · Q = laser · Shift boost · Esc exit cockpit.</p>
       </div>
       <div class="camera-card">
-        <strong>EVENT DECK</strong>
-        <p>Replay an event for everyone in the current room.</p>
-        <button class="admin-btn" onclick="setGameTimeScale(0, true)">⏸️ Freeze Arena Time</button>
-        <button class="admin-btn" onclick="setGameTimeScale(0.5, true)">🐢 Slow-Mo Arena</button>
-        <button class="admin-btn" onclick="setGameTimeScale(1, true)">🕰️ Normal Arena Time</button>
-        <button class="admin-btn" onclick="setGameTimeScale(2.5, true)">⚡ Fast-Forward Arena</button>
-        <button class="admin-btn" onclick="triggerRoomEvent('speed')">⚡ Speed Event</button>
-        <button class="admin-btn" onclick="triggerRoomEvent('strength')">🦾 Strength Event</button>
-        <button class="admin-btn" onclick="triggerRoomEvent('healing')">💚 Healing Event</button>
-        <button class="admin-btn" onclick="triggerRoomEvent('thunder')">🌩️ Thunder Event</button>
+        <strong>🎛️ REMOTE ROOM CONTROL</strong>
+        <p id="remote-admin-connection-status">Connect to a host-approved room from Room Radar to unlock these controls.</p>
+        <div id="remote-admin-controls" style="display: none;">
+          <label for="remote-admin-target" style="display: block; margin: 8px 0 4px; color: #94a3b8; font-size: 11px;">Who should receive this action?</label>
+          <select id="remote-admin-target" class="admin-room-field" aria-label="Remote action target">
+            <option value="all">Everyone in the room</option>
+            <option value="host">Room host only</option>
+          </select>
+          <p id="remote-admin-room-status">Waiting for approved room data…</p>
+          <div style="display: flex; gap: 8px;">
+            <input id="remote-wave-input" type="number" min="1" max="100" value="1" aria-label="Remote wave number">
+            <input id="remote-spawn-mult-input" type="number" min="1" max="10" value="2" aria-label="Remote NPC spawn multiplier">
+          </div>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'set-wave', wave: document.getElementById('remote-wave-input').value})">🌊 Set Wave</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'set-npc-count', multiplier: document.getElementById('remote-spawn-mult-input').value})">🤖 Set NPC Multiplier &amp; Spawn</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'event', event: 'speed'})">⚡ Speed Event</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'event', event: 'strength'})">🦾 Strength Event</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'event', event: 'healing'})">💚 Healing Event</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'event', event: 'thunder'})">🌩️ Thunder Event</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'time-scale', scale: 0})">⏸️ Freeze Time</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'time-scale', scale: 0.5})">🐢 Slow-Mo</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'time-scale', scale: 1})">🕰️ Normal Time</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'time-scale', scale: 2.5})">⚡ Fast-Forward</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'banana-rain'})">🍌 Banana Rain</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'peel-party'})">🧊 Peel Party</button>
+          <button class="admin-btn" onclick="sendRemoteAdminAction({action: 'comedy'})">📢 Comedy Broadcast</button>
+          <button class="admin-btn" style="background: #7f1d1d; border-color: #ef4444;" onclick="disconnectRemoteAdmin()">🔌 Disconnect from Room</button>
+        </div>
       </div>
     </div>
-    <button class="admin-btn" style="max-width: 300px; margin-top: 20px;" onclick="closeAdminRoom()">Return to Admin Panel</button>
+    <button class="admin-btn" style="display: block; max-width: 320px; margin: 18px auto 0;" onclick="closeAdminRoom()">↩ Return to Admin Panel</button>
   </div>
   <div id="spectator-controls">
     <button class="admin-btn" style="background: #164e63; border-color: #22d3ee;" onclick="returnToMainCamera()">🎥 Return to Main Camera</button>
@@ -1031,7 +1201,15 @@
     // Network Variables
     let peer = null;
     let networkConnection = null;
+    let remoteAdminPeer = null;
+    let remoteAdminConnection = null;
+    let remoteAdminApproved = false;
+    let remoteAdminDenied = false;
+    let remoteAdminTargetRoom = null;
+    let hostRemoteAdminKey = '';
+    let remoteAdminStatusTimer = null;
     const networkConnections = [];
+    const authorizedRemoteAdminConnections = new Set();
     let isHost = false;
     let isAdminRoom = false;
     let isAdminSpectating = false;
@@ -1987,7 +2165,8 @@
     }
 
     function getRoomDirectoryEndpoint() {
-      const configuredUrl = document.getElementById('server-directory-url').value.trim()
+      const configuredUrl = document.getElementById('admin-room-directory-url').value.trim()
+        || document.getElementById('server-directory-url').value.trim()
         || localStorage.getItem(roomDirectoryStorageKey)
         || '';
       if (!configuredUrl) throw new Error('Enter the shared room-directory URL first.');
@@ -2008,6 +2187,292 @@
       const path = url.pathname.replace(/\/+$/, '');
       url.pathname = path.endsWith('/api/rooms') ? path : `${path}/api/rooms`;
       return url.toString().replace(/\/$/, '');
+    }
+
+    function saveAdminDirectoryAndScan() {
+      const input = document.getElementById('admin-room-directory-url');
+      const status = document.getElementById('admin-room-directory-status');
+      try {
+        const endpoint = getRoomDirectoryEndpoint();
+        const baseUrl = endpoint.slice(0, -'/api/rooms'.length);
+        localStorage.setItem(roomDirectoryStorageKey, baseUrl);
+        input.value = baseUrl;
+        document.getElementById('server-directory-url').value = baseUrl;
+        status.textContent = 'Directory saved on this device. Scanning rooms…';
+        loadAdminRoomDirectory();
+      } catch (error) {
+        status.textContent = error.message;
+      }
+    }
+
+    async function loadAdminRoomDirectory() {
+      const status = document.getElementById('admin-room-directory-status');
+      const list = document.getElementById('admin-room-list');
+      list.replaceChildren();
+      let endpoint;
+      try {
+        endpoint = getRoomDirectoryEndpoint();
+      } catch (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      status.textContent = 'Scanning live rooms…';
+      try {
+        const response = await fetch(endpoint, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Directory responded with HTTP ${response.status}.`);
+        const result = await response.json();
+        if (!result || !Array.isArray(result.rooms)) throw new Error('Directory returned an invalid room list.');
+        const rooms = result.rooms.filter(room =>
+          room
+          && typeof room.peerId === 'string'
+          && typeof room.name === 'string'
+          && /^[A-Za-z0-9_-]{1,128}$/.test(room.peerId)
+        );
+        if (rooms.length === 0) {
+          status.textContent = 'No live rooms found. Host a room and enable directory listing.';
+          return;
+        }
+
+        rooms.forEach(room => {
+          const entry = document.createElement('div');
+          entry.className = 'admin-room-entry';
+          const name = document.createElement('strong');
+          name.textContent = room.name;
+          const meta = document.createElement('small');
+          const players = Number.isInteger(room.players) ? room.players : 1;
+          const capacity = Number.isInteger(room.capacity) ? room.capacity : 8;
+          meta.textContent = `${players}/${capacity} pilots · ${room.adminEnabled === true ? 'host-approved admin available' : 'join as player'}`;
+          const joinButton = document.createElement('button');
+          joinButton.className = 'admin-btn';
+          joinButton.type = 'button';
+          joinButton.textContent = '🎮 Join as Player';
+          joinButton.disabled = players >= capacity;
+          joinButton.addEventListener('click', () => joinDirectoryRoomAsPlayer(room.peerId));
+          entry.append(name, meta, joinButton);
+
+          if (room.adminEnabled === true) {
+            const adminButton = document.createElement('button');
+            adminButton.className = 'admin-btn';
+            adminButton.type = 'button';
+            adminButton.textContent = '🛰️ Request Host-Approved Control';
+            adminButton.addEventListener('click', () => connectToApprovedRoom(room));
+            entry.appendChild(adminButton);
+          }
+          list.appendChild(entry);
+        });
+        status.textContent = `${rooms.length} live room${rooms.length === 1 ? '' : 's'} found. Player counts are supplied by each room host.`;
+      } catch (error) {
+        status.textContent = `Could not load rooms: ${error.message}`;
+      }
+    }
+
+    function setRemoteAdminKey() {
+      const status = document.getElementById('host-remote-admin-status');
+      if (!isHost || !peer || !peer.id) {
+        status.textContent = 'Host a room before enabling remote admin.';
+        return;
+      }
+      const key = document.getElementById('host-remote-admin-key').value.trim();
+      if (key.length < 12 || key.length > 128) {
+        status.textContent = 'Use a key between 12 and 128 characters.';
+        return;
+      }
+      if (hostRemoteAdminKey && hostRemoteAdminKey !== key) closeAuthorizedRemoteAdmins();
+      hostRemoteAdminKey = key;
+      status.textContent = 'Remote admin enabled. Share this key only with people you approve.';
+      updateHostedRoomDirectory();
+    }
+
+    function updateRemoteAdminHostSetup() {
+      const setup = document.getElementById('host-admin-setup');
+      const status = document.getElementById('host-remote-admin-status');
+      setup.style.display = isHost ? 'block' : 'none';
+      if (!isHost) return;
+      status.textContent = hostRemoteAdminKey
+        ? 'Remote admin is enabled for this hosted room. Share the key only with trusted people.'
+        : 'Remote admin is off. Enable it with a shared approval key.';
+    }
+
+    function generateRemoteAdminKey() {
+      const status = document.getElementById('host-remote-admin-status');
+      if (!window.crypto || !window.crypto.getRandomValues) {
+        status.textContent = 'Secure key generation is unavailable in this browser context.';
+        return;
+      }
+      const bytes = new Uint8Array(24);
+      window.crypto.getRandomValues(bytes);
+      const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+      const key = Array.from(bytes, byte => alphabet[byte % alphabet.length]).join('');
+      document.getElementById('host-remote-admin-key').value = key;
+      setRemoteAdminKey();
+    }
+
+    async function copyRemoteAdminKey() {
+      const status = document.getElementById('host-remote-admin-status');
+      const key = document.getElementById('host-remote-admin-key').value.trim();
+      if (!hostRemoteAdminKey || key !== hostRemoteAdminKey) {
+        status.textContent = 'Enable the current key before copying it.';
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(key);
+        status.textContent = 'Approval key copied. Share it only with people you trust.';
+      } catch (error) {
+        const input = document.getElementById('host-remote-admin-key');
+        input.focus();
+        input.select();
+        status.textContent = 'Clipboard access was blocked. The key is selected so you can copy it manually.';
+      }
+    }
+
+    function disableRemoteAdmin() {
+      hostRemoteAdminKey = '';
+      document.getElementById('host-remote-admin-key').value = '';
+      document.getElementById('host-remote-admin-status').textContent = 'Remote admin disabled. Existing remote admin links were disconnected.';
+      closeAuthorizedRemoteAdmins();
+      updateHostedRoomDirectory();
+    }
+
+    function closeAuthorizedRemoteAdmins() {
+      authorizedRemoteAdminConnections.forEach(connection => connection.close());
+      authorizedRemoteAdminConnections.clear();
+      updateRemoteAdminStatusTimer();
+    }
+
+    function joinDirectoryRoomAsPlayer(roomPeerId) {
+      if (isHost && peer && peer.open) {
+        document.getElementById('admin-room-directory-status').textContent = 'Close your hosted room before joining another room as a player.';
+        return;
+      }
+      disconnectRemoteAdmin(false);
+      closeAdminRoom();
+      closeAdmin();
+      joinByCode(roomPeerId);
+    }
+
+    function connectToApprovedRoom(room) {
+      const status = document.getElementById('remote-admin-connection-status');
+      const key = document.getElementById('admin-directory-key').value.trim();
+      if (room.adminEnabled !== true) {
+        status.textContent = 'This room has not enabled remote admin.';
+        return;
+      }
+      if (key.length < 12) {
+        status.textContent = 'Enter the host-approved key (at least 12 characters) in Room Radar.';
+        return;
+      }
+      if (isHost && peer && peer.open && room.peerId === peer.id) {
+        status.textContent = 'You are already hosting this room; use the local controls instead.';
+        return;
+      }
+      disconnectRemoteAdmin(false);
+      remoteAdminTargetRoom = room;
+      remoteAdminApproved = false;
+      remoteAdminDenied = false;
+      document.getElementById('remote-admin-controls').style.display = 'none';
+      status.textContent = `Connecting to ${room.name} and requesting host approval…`;
+      remoteAdminPeer = new Peer();
+      remoteAdminPeer.on('open', () => {
+        remoteAdminConnection = remoteAdminPeer.connect(room.peerId, {
+          reliable: true,
+          metadata: { role: 'remote-admin', key }
+        });
+        remoteAdminConnection.on('open', () => {
+          status.textContent = `Connected to ${room.name}. Waiting for host approval…`;
+        });
+        remoteAdminConnection.on('data', handleRemoteAdminResponse);
+        remoteAdminConnection.on('close', () => {
+          remoteAdminApproved = false;
+          document.getElementById('remote-admin-controls').style.display = 'none';
+          if (remoteAdminDenied) status.textContent = `The host denied remote admin access to ${remoteAdminTargetRoom ? remoteAdminTargetRoom.name : 'this room'}.`;
+          else if (remoteAdminTargetRoom) status.textContent = `Remote admin link to ${remoteAdminTargetRoom.name} closed.`;
+          remoteAdminConnection = null;
+        });
+        remoteAdminConnection.on('error', error => {
+          status.textContent = `Remote admin connection failed: ${error.message || error.type}`;
+        });
+      });
+      remoteAdminPeer.on('error', error => {
+        status.textContent = `Could not open remote admin connection: ${error.message || error.type}`;
+      });
+    }
+
+    function handleRemoteAdminResponse(data) {
+      if (!data || typeof data !== 'object') return;
+      const status = document.getElementById('remote-admin-connection-status');
+      if (data.type === 'remote-admin-denied') {
+        remoteAdminApproved = false;
+        remoteAdminDenied = true;
+        document.getElementById('remote-admin-controls').style.display = 'none';
+        status.textContent = typeof data.message === 'string' ? data.message : 'The room host denied remote admin access.';
+        return;
+      }
+      if (data.type === 'remote-admin-approved') {
+        remoteAdminApproved = true;
+        document.getElementById('remote-admin-controls').style.display = 'block';
+        status.textContent = `Host approved remote control for ${remoteAdminTargetRoom ? remoteAdminTargetRoom.name : 'the room'}.`;
+        updateRemoteAdminRoomStatus(data);
+        return;
+      }
+      if (data.type === 'remote-admin-room-status' && remoteAdminApproved) {
+        updateRemoteAdminRoomStatus(data);
+        return;
+      }
+      if (data.type === 'remote-admin-action-result' && typeof data.message === 'string') {
+        status.textContent = data.message;
+      }
+    }
+
+    function updateRemoteAdminRoomStatus(data) {
+      const roomStatus = document.getElementById('remote-admin-room-status');
+      const target = document.getElementById('remote-admin-target');
+      if (Number.isInteger(data.wave)) document.getElementById('remote-wave-input').value = data.wave;
+      roomStatus.textContent = `Wave ${Number(data.wave) || 1} · ${Number(data.hostiles) || 0} NPCs · ${Array.isArray(data.players) ? data.players.length : 0} pilots`;
+      if (!Array.isArray(data.players)) return;
+      const selectedValue = target.value;
+      target.replaceChildren();
+      const allOption = document.createElement('option');
+      allOption.value = 'all';
+      allOption.textContent = 'Everyone in the room';
+      target.appendChild(allOption);
+      data.players.forEach(member => {
+        if (!member || typeof member.id !== 'string' || typeof member.username !== 'string') return;
+        const option = document.createElement('option');
+        option.value = member.id;
+        option.textContent = `${member.id === 'host' ? '👑' : '👤'} ${member.username}${member.id === 'host' ? ' (host)' : ''}`;
+        target.appendChild(option);
+      });
+      if (Array.from(target.options).some(option => option.value === selectedValue)) target.value = selectedValue;
+    }
+
+    function sendRemoteAdminAction(action) {
+      const status = document.getElementById('remote-admin-connection-status');
+      if (!remoteAdminApproved || !remoteAdminConnection || !remoteAdminConnection.open) {
+        status.textContent = 'Connect to a room and wait for host approval first.';
+        return;
+      }
+      remoteAdminConnection.send({
+        type: 'remote-admin-request',
+        action: { ...action, target: document.getElementById('remote-admin-target').value }
+      });
+      status.textContent = 'Action sent to the approved room host…';
+    }
+
+    function disconnectRemoteAdmin(showMessage = true) {
+      remoteAdminApproved = false;
+      remoteAdminDenied = false;
+      if (remoteAdminConnection) {
+        remoteAdminConnection.close();
+        remoteAdminConnection = null;
+      }
+      if (remoteAdminPeer) {
+        remoteAdminPeer.destroy();
+        remoteAdminPeer = null;
+      }
+      document.getElementById('remote-admin-controls').style.display = 'none';
+      if (showMessage) document.getElementById('remote-admin-connection-status').textContent = 'Disconnected from remote room.';
+      remoteAdminTargetRoom = null;
     }
 
     function showServerList() {
@@ -2102,7 +2567,12 @@
         const response = await fetch(`${endpoint}/${encodeURIComponent(hostedDirectoryPeerId)}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: `${playerUsername}'s Arena`, players: openPlayers, capacity: 8 })
+          body: JSON.stringify({
+            name: `${playerUsername}'s Arena`,
+            players: openPlayers,
+            capacity: 8,
+            adminEnabled: Boolean(hostRemoteAdminKey)
+          })
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         directoryFailureReported = false;
@@ -2148,6 +2618,10 @@
         }
         
         peer.on('connection', (conn) => {
+          if (conn.metadata && conn.metadata.role === 'remote-admin') {
+            handleIncomingRemoteAdminConnection(conn);
+            return;
+          }
           if (networkConnections.length >= 7) {
             conn.close();
             addMessage('System', 'This room is full. Try another server.', true);
@@ -2176,7 +2650,7 @@
       peer.on('open', () => {
         addMessage('System', `Attempting to join...`, true);
         
-        networkConnection = peer.connect(code); 
+        networkConnection = peer.connect(code, { metadata: { role: 'player' } });
         
         networkConnection.on('open', () => {
           isHost = false;
@@ -2215,6 +2689,143 @@
       setupNetworkEvents(connection);
       updateAdminStatus();
       updatePlayerRoster();
+    }
+
+    function getRemoteAdminRoomSnapshot() {
+      return {
+        type: 'remote-admin-room-status',
+        wave: currentWave,
+        hostiles: enemies.length,
+        players: [
+          { id: 'host', username: playerUsername },
+          ...networkConnections
+            .filter(connection => connection.open && connection.remotePlayer)
+            .map(connection => ({
+              id: connection.peer,
+              username: connection.remotePlayer.username || 'Connecting player'
+            }))
+        ]
+      };
+    }
+
+    function sendRemoteAdminRoomStatus() {
+      authorizedRemoteAdminConnections.forEach(connection => {
+        if (connection.open) connection.send(getRemoteAdminRoomSnapshot());
+      });
+    }
+
+    function updateRemoteAdminStatusTimer() {
+      if (authorizedRemoteAdminConnections.size > 0 && !remoteAdminStatusTimer) {
+        remoteAdminStatusTimer = setInterval(sendRemoteAdminRoomStatus, 2000);
+      } else if (authorizedRemoteAdminConnections.size === 0 && remoteAdminStatusTimer) {
+        clearInterval(remoteAdminStatusTimer);
+        remoteAdminStatusTimer = null;
+      }
+    }
+
+    function handleIncomingRemoteAdminConnection(connection) {
+      const metadata = connection.metadata;
+      const suppliedKey = metadata && typeof metadata.key === 'string' ? metadata.key : '';
+      if (!hostRemoteAdminKey || suppliedKey !== hostRemoteAdminKey) {
+        const deny = () => {
+          if (!connection.open) return;
+          connection.send({ type: 'remote-admin-denied', message: 'The host denied this key or remote admin is disabled.' });
+          setTimeout(() => connection.close(), 250);
+        };
+        connection.on('open', deny);
+        if (connection.open) deny();
+        return;
+      }
+
+      authorizedRemoteAdminConnections.add(connection);
+      const approve = () => {
+        if (!connection.open) return;
+        connection.send({ ...getRemoteAdminRoomSnapshot(), type: 'remote-admin-approved' });
+        updateRemoteAdminStatusTimer();
+      };
+      connection.on('open', approve);
+      if (connection.open) approve();
+      connection.on('data', data => {
+        if (!authorizedRemoteAdminConnections.has(connection) || !data || data.type !== 'remote-admin-request') return;
+        handleApprovedRemoteAdminAction(connection, data.action);
+      });
+      connection.on('close', () => {
+        authorizedRemoteAdminConnections.delete(connection);
+        updateRemoteAdminStatusTimer();
+      });
+      connection.on('error', () => {
+        authorizedRemoteAdminConnections.delete(connection);
+        updateRemoteAdminStatusTimer();
+      });
+    }
+
+    function validateRemoteAdminAction(action) {
+      if (!action || typeof action !== 'object' || typeof action.action !== 'string' || typeof action.target !== 'string') return false;
+      if (action.action === 'set-wave') {
+        return Number.isInteger(Number(action.wave)) && Number(action.wave) >= 1 && Number(action.wave) <= 100;
+      }
+      if (action.action === 'set-npc-count') {
+        return Number.isInteger(Number(action.multiplier)) && Number(action.multiplier) >= 1 && Number(action.multiplier) <= 10;
+      }
+      if (action.action === 'time-scale') {
+        return Number.isFinite(action.scale) && action.scale >= 0 && action.scale <= 3;
+      }
+      if (action.action === 'event') {
+        return ['speed', 'strength', 'healing', 'thunder'].includes(action.event);
+      }
+      return ['banana-rain', 'peel-party', 'comedy'].includes(action.action);
+    }
+
+    function applyApprovedRoomAction(action) {
+      if (action.action === 'set-wave') {
+        currentWave = Number(action.wave);
+        spawnWave();
+        addMessage('Admin', `🌊 Approved room admin set the wave to ${currentWave}.`, true);
+      } else if (action.action === 'set-npc-count') {
+        spawnMultiplier = Number(action.multiplier);
+        document.getElementById('spawn-mult-input').value = String(spawnMultiplier);
+        spawnWave();
+        addMessage('Admin', `🤖 Approved room admin set the NPC multiplier to ${spawnMultiplier}.`, true);
+      } else if (action.action === 'time-scale') {
+        setGameTimeScale(action.scale, false, false);
+      } else if (action.action === 'event') {
+        applyRoomEvent(action.event, false);
+      } else if (action.action === 'banana-rain') {
+        triggerBananaRain(false);
+      } else if (action.action === 'peel-party') {
+        triggerPeelParty(false);
+      } else if (action.action === 'comedy') {
+        triggerComedyBroadcast(false);
+      }
+    }
+
+    function handleApprovedRemoteAdminAction(adminConnection, action) {
+      if (!validateRemoteAdminAction(action)) {
+        adminConnection.send({ type: 'remote-admin-action-result', message: 'Action rejected: invalid command or values.' });
+        return;
+      }
+      let recipients = [];
+      if (action.target !== 'all' && action.target !== 'host') {
+        recipients = networkConnections.filter(connection => connection.open && connection.peer === action.target);
+        if (recipients.length === 0) {
+          adminConnection.send({ type: 'remote-admin-action-result', message: 'That player is no longer connected.' });
+          return;
+        }
+      }
+
+      if (action.target === 'all') {
+        applyApprovedRoomAction(action);
+        broadcastToRoom({ type: 'approved-room-action', action });
+      } else if (action.target === 'host') {
+        applyApprovedRoomAction(action);
+      } else {
+        recipients[0].send({ type: 'approved-player-action', action });
+      }
+      adminConnection.send({
+        type: 'remote-admin-action-result',
+        message: `Approved ${action.action} action sent to ${action.target === 'all' ? 'everyone' : action.target === 'host' ? 'the host' : 'the selected player'}.`
+      });
+      sendRemoteAdminRoomStatus();
     }
 
     function broadcastToRoom(data) {
@@ -2272,6 +2883,12 @@
         if (data.type === 'admin-time-scale' && Number.isFinite(data.scale)) {
           setGameTimeScale(data.scale, false, false);
         }
+        if (!isHost && data.type === 'approved-room-action' && validateRemoteAdminAction(data.action)) {
+          applyApprovedRoomAction(data.action);
+        }
+        if (!isHost && data.type === 'approved-player-action' && validateRemoteAdminAction(data.action)) {
+          applyApprovedRoomAction(data.action);
+        }
       });
     }
 
@@ -2279,6 +2896,7 @@
       const roster = document.getElementById('player-roster');
       const status = document.getElementById('remote-camera-status');
       if (!roster || !status) return;
+      updateAdminRoomTelemetry();
       roster.innerHTML = '';
       const botTargets = enemies.map((enemy, index) => {
         if (!enemy.spectatorTarget) {
@@ -2314,6 +2932,21 @@
         });
         roster.appendChild(choice);
       });
+    }
+
+    function updateAdminRoomTelemetry() {
+      const waveReadout = document.getElementById('admin-wave-readout');
+      const hostilesReadout = document.getElementById('admin-hostiles-readout');
+      const pilotsReadout = document.getElementById('admin-pilots-readout');
+      const timeReadout = document.getElementById('admin-time-readout');
+      if (waveReadout) waveReadout.textContent = String(currentWave);
+      if (hostilesReadout) hostilesReadout.textContent = String(enemies.length);
+      if (pilotsReadout) {
+        pilotsReadout.textContent = String(networkConnections.filter(connection => connection.open).length + 1);
+      }
+      if (timeReadout) {
+        timeReadout.textContent = `${gameTimeScale.toFixed(2).replace(/\.?0+$/, '')}x`;
+      }
     }
 
     function updateAdminStatus() {
@@ -2357,7 +2990,7 @@
       }
     }
 
-    function triggerBananaRain() {
+    function triggerBananaRain(broadcast = true) {
       const jokes = [
         'WEATHER ALERT: 100% chance of bananas. Please protect your dignity. 🍌',
         'The sky has selected violence... but only the silly kind. ☁️🍌',
@@ -2365,14 +2998,14 @@
       ];
       const message = jokes[Math.floor(Math.random() * jokes.length)];
       addMessage('Admin', `🍌 BANANA RAIN: ${message}`, true);
-      broadcastToRoom({ type: 'admin-broadcast', message: `🍌 BANANA RAIN: ${message}` });
+      if (broadcast) broadcastToRoom({ type: 'admin-broadcast', message: `🍌 BANANA RAIN: ${message}` });
       for (let i = 0; i < 14; i++) {
         const isGolf = i % 4 === 0;
         spawnTrollProjectile(isGolf);
       }
     }
 
-    function triggerPeelParty() {
+    function triggerPeelParty(broadcast = true) {
       for (let i = 0; i < 8; i++) {
         const peelGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 6);
         const peelMat = new THREE.MeshLambertMaterial({ color: 0xfacc15 });
@@ -2387,10 +3020,10 @@
         bananaPeels.push(peel);
       }
       addMessage('Admin', '🧊 PEEL PARTY: The floor is now 87% banana. Walk emotionally carefully.', true);
-      broadcastToRoom({ type: 'admin-broadcast', message: '🧊 PEEL PARTY ACTIVE: Please walk emotionally carefully.' });
+      if (broadcast) broadcastToRoom({ type: 'admin-broadcast', message: '🧊 PEEL PARTY ACTIVE: Please walk emotionally carefully.' });
     }
 
-    function triggerComedyBroadcast() {
+    function triggerComedyBroadcast(broadcast = true) {
       const lines = [
         '📢 Official announcement: the boss has been promoted to assistant boss.',
         '📢 Please keep all arms, legs, and bananas inside the arena at all times.',
@@ -2399,7 +3032,7 @@
       ];
       const message = lines[Math.floor(Math.random() * lines.length)];
       addMessage('Admin', message, true);
-      broadcastToRoom({ type: 'admin-broadcast', message: message });
+      if (broadcast) broadcastToRoom({ type: 'admin-broadcast', message: message });
     }
 
     function setGameTimeScale(value, broadcast = false, announce = true) {
@@ -2411,6 +3044,7 @@
       const label = document.getElementById('time-scale-value');
       if (slider) slider.value = String(gameTimeScale);
       if (label) label.textContent = `${gameTimeScale.toFixed(2).replace(/\.?0+$/, '')}x`;
+      updateAdminRoomTelemetry();
       if (broadcast) broadcastToRoom({ type: 'admin-time-scale', scale: gameTimeScale });
       if (announce) {
         const description = gameTimeScale === 0
@@ -2463,14 +3097,18 @@
     function openAdminRoom() {
       isAdminRoom = true;
       isAdminSpectating = adminScreenTarget === 'remote';
+      document.getElementById('admin-room').classList.toggle('direct-admin-entry', isAdminRoute);
+      document.getElementById('admin-room-directory-url').value = localStorage.getItem(roomDirectoryStorageKey) || '';
       adminPanel.style.display = 'none';
       document.getElementById('spectator-controls').style.display = 'none';
       document.getElementById('admin-room').style.display = 'block';
+      updateRemoteAdminHostSetup();
       updatePlayerRoster();
       document.getElementById('remote-camera-status').textContent = networkConnections.some(connection => connection.open)
         ? 'Player and bot cameras ready.'
         : 'No connected player or bot camera yet.';
       Object.keys(keys).forEach(k => keys[k] = false);
+      if (localStorage.getItem(roomDirectoryStorageKey)) loadAdminRoomDirectory();
     }
 
     function closeAdminRoom() {
